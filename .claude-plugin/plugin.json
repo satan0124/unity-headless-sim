@@ -1,0 +1,10 @@
+{
+  "name": "unity-headless-sim",
+  "description": "Run thousands of seeded, no-render games in a Unity project with a bot at the controls and get win rates with 95% confidence intervals.",
+  "version": "0.1.0",
+  "author": { "name": "satan0124" },
+  "homepage": "https://github.com/satan0124/unity-headless-sim",
+  "repository": "https://github.com/satan0124/unity-headless-sim",
+  "license": "MIT",
+  "keywords": ["unity", "simulation", "monte-carlo", "balance", "headless", "gamedev"]
+}

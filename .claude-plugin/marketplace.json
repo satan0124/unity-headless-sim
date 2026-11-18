@@ -1,0 +1,19 @@
+{
+  "name": "unity-headless-sim",
+  "owner": { "name": "satan0124" },
+  "metadata": {
+    "description": "Headless, seeded Monte Carlo simulation for Unity games.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "unity-headless-sim",
+      "source": "./",
+      "description": "Run thousands of seeded, no-render games in a Unity project with a bot at the controls and get win rates with 95% confidence intervals.",
+      "version": "0.1.0",
+      "license": "MIT",
+      "keywords": ["unity", "simulation", "monte-carlo", "balance", "headless", "gamedev"],
+      "category": "development"
+    }
+  ]
+}
