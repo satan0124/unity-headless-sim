@@ -1,10 +1,10 @@
-# unity-headless-sim
+# 虛數空間（Imaginary Space）
 
 **讓 Unity 遊戲不開畫面連跑幾千局，拿到信得過的通關率。**
 
 [English](README.md) ｜ 繁體中文 ｜ [简体中文](README.zh-CN.md)
 
-這是一個 Claude Code skill，帶著 Claude 替你的 Unity 專案加上無畫面模擬模式：由 bot 操作，每局有自己固定的亂數種子，多個行程平行跑，結果整理成通關率和 95% 信賴區間。模擬跑的是遊戲本身的 C# 程式，不是另寫一份規則。
+虛數空間是一個 Claude Code skill，安裝名稱是 `unity-headless-sim`。它帶著 Claude 替你的 Unity 專案加上無畫面模擬模式：由 bot 操作，每局有自己固定的亂數種子，多個行程平行跑，結果整理成通關率和 95% 信賴區間。模擬跑的是遊戲本身的 C# 程式，不是另寫一份規則。
 
 > 需要 Claude Code、一個 Unity 專案和 Python 3.8 以上。Claude 會改專案的程式，請像審 pull request 一樣看過再收。只在 Windows＋Unity 6 上測過。
 

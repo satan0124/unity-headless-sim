@@ -1,9 +1,9 @@
 ---
 name: unity-headless-sim
-description: Add a headless, seeded, batch Monte Carlo simulation mode to a Unity game, so thousands of full runs play out with no rendering and the results come back as win rates with 95% confidence intervals. Covers auditing whether the project can be stepped deterministically, adding an external fixed-step driver, a bot runner that plays many runs per process, parallel batch launch with disjoint seeds, aggregation, determinism checks, and an optional decision-replay model. Use when the user wants to measure balance, win rate, difficulty, or build strength in a Unity project by running many games instead of playtesting; mentions headless, batchmode, nographics, Monte Carlo, mass simulation, bot runs, seeds, or "run 10,000 games".
+description: Add a headless, seeded, batch Monte Carlo simulation mode to a Unity game, so thousands of full runs play out with no rendering and the results come back as win rates with 95% confidence intervals. Covers auditing whether the project can be stepped deterministically, adding an external fixed-step driver, a bot runner that plays many runs per process, parallel batch launch with disjoint seeds, aggregation, determinism checks, and an optional decision-replay model. Use when the user wants to measure balance, win rate, difficulty, or build strength in a Unity project by running many games instead of playtesting; mentions Imaginary Space, 虛數空間, 虚数空间, headless, batchmode, nographics, Monte Carlo, mass simulation, bot runs, seeds, or "run 10,000 games".
 ---
 
-# Unity headless simulation
+# Imaginary Space (虛數空間): Unity headless simulation
 
 Run the game's own code thousands of times with no rendering, a bot at the controls, and a fixed random seed per run. Collect one line per run, then aggregate into win rates with confidence intervals.
 

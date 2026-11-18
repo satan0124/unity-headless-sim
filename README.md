@@ -1,10 +1,10 @@
-# unity-headless-sim
+# Imaginary Space（虛數空間）
 
 **Play your Unity game thousands of times with no rendering, and get win rates you can trust.**
 
 English ｜ [繁體中文](README.zh-TW.md) ｜ [简体中文](README.zh-CN.md)
 
-A Claude Code skill. It walks Claude through adding a headless simulation mode to your Unity project: a bot plays, every run has its own fixed seed, many processes run in parallel, and the results come back as win rates with 95% confidence intervals. The simulation is your game's own C# code, not a second copy of the rules.
+Imaginary Space is a Claude Code skill, installed as `unity-headless-sim`. It walks Claude through adding a headless simulation mode to your Unity project: a bot plays, every run has its own fixed seed, many processes run in parallel, and the results come back as win rates with 95% confidence intervals. The simulation is your game's own C# code, not a second copy of the rules.
 
 > Needs Claude Code, a Unity project and Python 3.8+. Claude edits your project's code, so review the changes like any other pull request. Tested with Unity 6 on Windows only.
 
