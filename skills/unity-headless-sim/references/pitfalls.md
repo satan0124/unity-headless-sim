@@ -32,7 +32,7 @@ How it showed up: the determinism check passed on an idle machine and failed whi
 
 ## Reading the numbers
 
-**Bot policy dominates.** On the source project, three bot policies (re-plan every step; 0.25 s reaction; random card picks) gave the same character win rates 30 to 60 points apart. The ranking of the strongest and weakest characters held across all three; the middle shuffled. Absolute win rates say little about players; comparisons under one fixed policy are what the tool is good for.
+**Bot policy dominates.** On the source project, three bot policies were compared (re-plan every step; 0.25 s reaction; random card picks). For six of eight characters, switching policy alone moved the win rate by 36 to 58 points. The ranking of the strongest and weakest characters held across all three; the middle shuffled. Absolute win rates say little about players; comparisons under one fixed policy are what the tool is good for.
 
 **Fixed seed hides luck.** Rerunning a batch with the same start seed replays the same runs. If that batch happens to be easy, every rerun is easy. Use a random start seed by default and print it; fix the seed only to reproduce a result or to compare before and after a change on the same runs.
 

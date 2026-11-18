@@ -99,7 +99,7 @@ python scripts/sim_batch.py run --exe <player> --grid map=0,1,2 diff=0,1,2 --run
 ### 7. Report honestly
 
 - Give intervals, not single numbers. With 100 runs a 50% win rate is roughly 40% to 60%.
-- **The bot is not a player.** On the source project, three bot policies gave the same character win rates 30 to 60 points apart. Absolute rates need calibration against real players. Comparisons (before vs after a change, character A vs B) are trustworthy only with the same bot policy and settings.
+- **The bot is not a player.** On the source project, switching between three bot policies moved the win rate by 36 to 58 points for six of eight characters. Absolute rates need calibration against real players. Comparisons (before vs after a change, character A vs B) are trustworthy only with the same bot policy and settings.
 - State the build and settings the numbers came from. A stale player binary is the most common wrong result.
 
 ## Optional: decision-replay model

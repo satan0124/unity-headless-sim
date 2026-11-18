@@ -1,34 +1,42 @@
 # unity-headless-sim
 
-**为 Unity 游戏加上无画面批量模拟的 Claude Code skill。**
+**让 Unity 游戏不渲染画面连跑几千局，拿到靠得住的通关率。**
 
 [English](README.md) ｜ [繁體中文](README.zh-TW.md) ｜ 简体中文
 
-人工试玩一次只能玩几局。这个 skill 让 Claude 把你的游戏改成可以不渲染画面、由 bot 操作、每局固定随机种子连跑几千局，最后报告通关率和 95% 置信区间。跑的是游戏本身的代码，不是另写一套规则。
+这是一个 Claude Code skill，引导 Claude 为你的 Unity 项目加上无画面模拟模式：由 bot 操作，每局有自己固定的随机种子，多个进程并行，结果汇总成通关率和 95% 置信区间。模拟跑的是游戏本身的 C# 代码，不是另写一套规则。
 
-它是从一款用 Unity 6、全代码驱动的 2D 割草游戏里抽出来的。在那个项目里，一局 15 分钟无画面跑完约 2～3 秒，同时开 10 个进程跑约 1,000 局不到 6 分钟。
+> 需要 Claude Code、一个 Unity 项目和 Python 3.8 以上。Claude 会修改项目代码，请像审 pull request 一样看过再合入。只在 Windows＋Unity 6 上测过。
 
-## Claude 会做什么
+[快速开始](#快速开始) · [示例](#示例) · [原项目的实测](#原项目的实测) · [限制](#限制)
 
-1. **检查项目**：找出会让固定步长、可复现的模拟失效的东西，比如物理、协程和 Animator 驱动游戏逻辑、游戏逻辑里读 `Time.deltaTime`、没设种子的随机数、逻辑分散在很多个 `Update` 里。
-2. **拆开游戏循环**：让模拟可以从外部用固定的 `dt` 推进，和正常游玩共用同一个步长。
-3. **加上运行器**（`HeadlessRunner.cs`）：一个进程连跑多局，菜单由 bot 当场选，每局之间还原存档，每局写一行 `RUN key=value ...`。
-4. **确认可复现**：同一个种子一定跑出同一局；连跑时的第 N 局，和用那个种子单独开一个进程跑的结果相同。
-5. **批量跑**：多个进程并行、种子范围互不重叠，汇总成表格和 `summary.csv`。
-6. **（可选）选卡回放模型**：回答“选卡规则改了会怎样”，一秒几千局。
+## 为什么用
 
-## 安装
+- **几千局，而不是几局。** 在原来的项目里，一局 15 分钟无画面跑完约 2～3 秒。
+- **不用另写一套规则。** 用 Python 再写一遍规则，会在没人察觉的情况下和游戏越差越远。这里跑的就是游戏本身，改平衡不用改两遍。
+- **可以复现。** 同一个种子一定跑出同一局，结果有异常可以单独拿出来看。
+- **数字带误差范围。** 每个通关率都附 Wilson 95% 置信区间，分得清是真的变了还是运气。
+- **不适合会直接说。** Claude 会先检查项目；物理、协程或 Animator 在驱动游戏逻辑的，改代码之前就先告诉你。
 
-作为插件安装，在 Claude Code 里输入：
+## 快速开始
+
+在 Claude Code 里输入：
 
 ```
 /plugin marketplace add satan0124/unity-headless-sim
 /plugin install unity-headless-sim@unity-headless-sim
 ```
 
-或者把 `skills/unity-headless-sim/` 复制到 `~/.claude/skills/`（所有项目可用）或 `<项目>/.claude/skills/`（只给单个项目）。
+或者把 `skills/unity-headless-sim/` 复制到 `~/.claude/skills/`（所有项目）或 `<项目>/.claude/skills/`（单个项目）。
 
-装好后在 Unity 项目里对 Claude 说“加一个无画面模拟模式，我要测通关率”之类的话就会用到。
+然后用 Claude Code 打开你的 Unity 项目，对它说：“加一个无画面模拟模式，我要测每个难度的通关率。”
+
+## 示例
+
+1. **检查**：Claude 用 `audit_unity.py` 扫描 `Assets/`，列出会卡住固定步长的地方，比如游戏逻辑读 `Time.deltaTime`、没设种子的 `Random`、逻辑分散在好几个 `Update` 里。
+2. **改代码**：拆开游戏循环，让模拟可以从外部推进；加上 `HeadlessRunner.cs`，再写一层小小的适配，让 bot 能操作、能选升级选项。
+3. **确认可复现**：`sim_batch.py determinism` 用同一个种子跑三次，再开一个连跑 3 局的进程，结果必须全部相同。
+4. **批量跑**：`sim_batch.py run --grid map=0,1,2 diff=0,1,2 --runs 100` 并行启动游戏，按地图和难度打印通关率、置信区间和存活时间中位数，并写出 `summary.csv`。
 
 ## 内容
 
@@ -37,17 +45,17 @@ skills/unity-headless-sim/
   SKILL.md                    Claude 照着执行的流程
   templates/
     IHeadlessSim.cs           游戏要实现的接口
-    HeadlessRunner.cs         命令行运行器（-headless -runs -seed -out -maxtime -think）
+    HeadlessRunner.cs         运行器：-headless -runs -seed -out -maxtime -think
     GameLoopPatch.cs          拆游戏循环的改前／改后示例
   scripts/
     audit_unity.py            扫描 Assets/ 找会卡住的地方
     sim_batch.py              run（批量）／summarize（汇总）／determinism（可复现检查）
   references/
     pitfalls.md               实际踩过、不会报错的坑
-    decision-model.md         选卡回放模型及其准确度限制
+    decision-model.md         选卡规则用的回放模型（可选）
 ```
 
-脚本只需要 Python 3.8 以上，不用装其他包，不通过 Claude 也能直接用：
+脚本只用 Python 标准库，不通过 Claude 也能用：
 
 ```
 python scripts/audit_unity.py MyGame/Assets
@@ -55,12 +63,43 @@ python scripts/sim_batch.py run --exe Build/MyGame.exe --grid map=0,1,2 diff=0,1
 python scripts/sim_batch.py determinism --exe Build/MyGame.exe --seed 42
 ```
 
+## 原项目的实测
+
+这个 skill 是从一款 Unity 6 的 2D 割草游戏里抽出来的，游戏逻辑全是纯 C#。2026 年 11 月在 i7-14700（28 线程）上测的：
+
+- 一局 15 分钟：无画面约 2～3 秒，另加约 5 秒的程序启动和退出。
+- 1,008 局、同时 10 个进程：5 分 38 秒。
+
+下表说明 bot 的影响有多大：八个角色、三种 bot 打法，每格 360 局，同一组种子（2026-11-16）。角色名称已匿名。
+
+| 角色 | 每一步都重新判断 | 每 0.25 秒反应一次 | 升级卡随机选 |
+|---|---|---|---|
+| A | 99.2% | 96.7% | 81.1% |
+| B | 96.9% | 58.9% | 68.3% |
+| C | 95.3% | 81.4% | 55.0% |
+| D | 86.7% | 68.9% | 28.9% |
+| E | 83.1% | 54.2% | 46.9% |
+| F | 77.2% | 65.0% | 34.4% |
+| G | 52.2% | 12.2% | 48.1% |
+| H | 32.8% | 6.4% | 26.9% |
+
+- 八个角色里有六个，光是换 bot 打法，通关率就差 36～58 个百分点。
+- 两端很稳：三种打法下 A 都最强、H 都最弱，中间的顺序会变。
+- bot 反应变慢时掉得最多的是 B 和 G；升级卡随机选时掉得最多的是 D 和 F。不同打法会暴露不同的弱点。
+
 ## 限制
 
-- 最适合游戏逻辑是纯 C#、从同一个地方推进的游戏。用 Unity 物理、Animator、Timeline、协程或补间动画驱动游戏逻辑的，要先把它们搬到自己的步进里；检查后如果不适合，Claude 会直接说明，不会硬跑出看起来对、其实不对的数字。
-- bot 不等于玩家。在原来的项目里，三种 bot 打法让同一个角色的通关率差了 30～60 个百分点。这些数字适合在同一种 bot 下做比较（改动前后、角色 A 对 B）；绝对的通关率要拿真人试玩校准。
-- 只在 Windows＋Unity 6 上测过。批量脚本本身跨平台，但 macOS、Linux 的可执行文件还没试过。
+- 最适合游戏逻辑是纯 C#、从同一个地方推进的游戏。用 Unity 物理、Animator、Timeline、协程或补间动画驱动游戏逻辑的，要先搬到自己的步进里。
+- bot 不等于玩家。这些数字适合在同一种 bot 打法下做比较（改动前后、A 对 B）；通关率本身的高低要拿真人试玩校准。
+- 批量脚本本身跨平台，但 macOS、Linux 的可执行文件还没试过。
+- 模拟步以外的代码只要从游戏用的随机数里抽过一次，同一个种子就跑不出同一局。原项目踩过的情况列在 `references/pitfalls.md`。
+
+## 文档
+
+- [SKILL.md](skills/unity-headless-sim/SKILL.md)：完整流程，一步一步（英文）
+- [pitfalls.md](skills/unity-headless-sim/references/pitfalls.md)：不会报错的坑，以及每个坑当时是怎么发现的（英文）
+- [decision-model.md](skills/unity-headless-sim/references/decision-model.md)：把选卡时间轴一秒回放几千次的模型，以及它的准确度限制（英文）
 
 ## 许可证
 
-MIT
+[MIT](LICENSE)
